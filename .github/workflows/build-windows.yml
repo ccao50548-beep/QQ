@@ -1,0 +1,97 @@
+
+name: Build JingcaiDesk V2.2 Windows EXE
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Locate JingcaiDesk
+        shell: pwsh
+        run: |
+          $apps = @(
+            Get-ChildItem -Path . -Recurse -File -Filter app.py |
+            Where-Object {
+              Test-Path (Join-Path $_.Directory.FullName "official.py")
+            }
+          )
+
+          if ($apps.Count -ne 1) {
+            throw "Expected one JingcaiDesk app.py, found $($apps.Count)"
+          }
+
+          $dir = $apps[0].Directory.FullName
+
+          "APP_DIR=$dir" |
+            Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+          Write-Host "Source directory: $dir"
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller==6.16.0
+
+      - name: Check syntax
+        shell: pwsh
+        run: |
+          Set-Location $env:APP_DIR
+          python -m compileall -q .
+
+      - name: Run tests
+        shell: pwsh
+        run: |
+          Set-Location $env:APP_DIR
+
+          if (Test-Path "tests") {
+            python -m unittest discover -s tests -p "test_*.py" -v
+          }
+          else {
+            throw "Tests directory not found"
+          }
+
+      - name: Build EXE
+        shell: pwsh
+        run: |
+          Set-Location $env:APP_DIR
+
+          python -m PyInstaller `
+            --noconfirm `
+            --clean `
+            --onefile `
+            --windowed `
+            --name JingcaiDesk `
+            --hidden-import=tkinter `
+            app.py
+
+      - name: Verify EXE
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:APP_DIR "dist\JingcaiDesk.exe"
+
+          if (-not (Test-Path $exe)) {
+            throw "JingcaiDesk.exe not generated"
+          }
+
+          Get-Item $exe |
+            Select-Object Name, Length, FullName
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: JingcaiDesk-V2.2-Windows-EXE
+          path: '**/dist/JingcaiDesk.exe'
+          if-no-files-found: error
+          retention-days: 30
