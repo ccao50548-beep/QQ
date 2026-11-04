@@ -1,0 +1,12 @@
+JingcaiDesk V2.2 Windows完整重建版（包含 SQLite WinError 32 修复）
+
+1. 在GitHub新建一个空白仓库 JingcaiDesk-V22-Fixed，默认分支main。
+2. 解压本ZIP，将其中所有文件和文件夹上传至新仓库根目录，注意不要将外层文件夹一起上传。
+3. 确认仓库根目录可见 app.py、core.py、official.py、official_view.py、sources.py、refresh.py、report.py、tests/，以及根目录的 .github/workflows/build-windows.yml。
+4. 网页上传可能漏掉隐藏的 .github 文件夹：若Actions没有工作流，在根目录新建 .github/workflows/build-windows.yml，并粘贴包中同名文件的内容。
+5. GitHub Actions中运行 Build JingcaiDesk V2.2 Windows EXE（main），成功后从Artifacts下载JingcaiDesk-V2.2-Windows-EXE。
+6. 解压后运行JingcaiDesk.exe；无需在使用电脑安装Python。
+
+测试：在当前Linux环境执行 python -m unittest discover -s tests -v，18项通过；Windows实机构建与联网能力尚待GitHub Actions和目标电脑验证。
+修复：core.py和official.py采用显式关闭SQLite连接；tests/test_integration.py修正Windows临时数据库清理。
+数据限制：未内置中国体彩官方受注清单的无授权抓取；需经合法接口或人工核对导入。普通赛程不会自动标为官方竞彩足球场次。概率预测不能保证结果。

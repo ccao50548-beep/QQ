@@ -1,0 +1,10 @@
+JingcaiDesk V2.2 重新打包说明
+
+推荐新建一个空白 GitHub 仓库，例如 JingcaiDesk-V22。
+1. 解压本 ZIP，上传解压后的 app.py、core.py、sources.py、refresh.py、official.py、official_view.py、report.py、tests 文件夹、sample 文件夹到 GitHub 仓库【根目录】。不要上传外层 ZIP 或外层文件夹。
+2. 同样上传 .github/workflows/build-windows.yml 到【仓库根目录】。注意 GitHub 网页上传可能不会保留隐藏的 .github 目录。最简单的方法是在仓库根目录选择 Add file -> Create new file，文件名填写 .github/workflows/build-windows.yml，并粘贴解压包中同名文件的完整内容。
+3. 打开 Actions -> Build JingcaiDesk V2.2 Windows EXE -> Run workflow -> main -> Run workflow。
+4. 绿色成功后打开运行记录，在 Artifacts 下载 JingcaiDesk-V2.2-Windows-EXE，解压找到 JingcaiDesk.exe。
+
+此包是源码+云端构建工程，不是已经编译好的 Windows EXE。
+注意：无正式授权竞彩受注接口时，无法自动保证获取中国体彩全部受注比赛；第三方赛程不是官方竞彩清单。概率模型在历史样本不足时不生成结果。软件不提供购彩交易。
